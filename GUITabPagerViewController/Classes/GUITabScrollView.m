@@ -15,6 +15,7 @@
 @property (strong, nonatomic) NSArray *tabViews;
 @property (strong, nonatomic) NSLayoutConstraint *tabIndicatorDisplacement;
 @property (strong, nonatomic) NSLayoutConstraint *tabIndicatorWidth;
+@property (strong, nonatomic) UIColor *backgroundColor;
 
 @end
 
@@ -39,7 +40,12 @@
     
     UIView *contentView = [UIView new];
     [contentView setFrame:CGRectMake(0, 0, MAX(width, self.frame.size.width), height)];
-    [contentView setBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
+      
+      if (self.backgroundColor) {
+          [contentView setBackgroundColor:self.backgroundColor];
+      } else {
+          [contentView setBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
+      }
     [contentView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:contentView];
     
@@ -115,6 +121,12 @@
   }
   
   return self;
+}
+
+- (instancetype)initWithTabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor
+{
+    self.backgroundColor = backgroundColor;
+    return [self initWithTabViews:tabViews tabBarHeight:height tabColor:color];
 }
 
 - (void)animateToTabAtIndex:(NSInteger)index {

@@ -29,5 +29,8 @@
 - (NSString *)titleForTabAtIndex:(NSInteger)index;
 - (CGFloat)tabHeight;
 - (UIColor *)tabColor;
+- (UIColor *)tabBackgroundColor;
+- (UIColor *)textColor;
+- (UIFont *)textFont;
 
 @end

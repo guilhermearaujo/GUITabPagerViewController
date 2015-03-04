@@ -19,6 +19,9 @@
 @property (strong, nonatomic) NSMutableArray *tabTitles;
 @property (strong, nonatomic) UIColor *headerColor;
 @property (assign, nonatomic) CGFloat headerHeight;
+@property (strong, nonatomic) UIColor *tabBackgroundColor;
+@property (strong, nonatomic) UIColor *textColor;
+@property (strong, nonatomic) UIFont *textFont;
 
 @end
 
@@ -114,6 +117,18 @@
     [self setHeaderColor:[UIColor orangeColor]];
   }
 
+  if ([[self dataSource] respondsToSelector:@selector(textColor)]) {
+    [self setTextColor:[[self dataSource] textColor]];
+  } else {
+    [self setTextColor:[UIColor blackColor]];
+  }
+
+  if ([[self dataSource] respondsToSelector:@selector(textFont)]) {
+    [self setTextFont:[[self dataSource] textFont]];
+  } else {
+    [self setTextFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f]];
+  }
+    
   CGRect frame = [[self view] frame];
   frame.origin.y += [self headerHeight];
   frame.size.height -= [self headerHeight];
@@ -137,7 +152,8 @@
       UILabel *label = [UILabel new];
       [label setText:title];
       [label setTextAlignment:NSTextAlignmentCenter];
-      [label setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f]];
+      [label setFont:self.textFont];
+      [label setTextColor:self.textColor];
       [label sizeToFit];
       
       CGRect frame = [label frame];
@@ -151,7 +167,12 @@
     [[self header] removeFromSuperview];
   }
   
-  [self setHeader:[[GUITabScrollView alloc] initWithTabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
+    if ([self tabBackgroundColor]) {
+        [self setHeader:[[GUITabScrollView alloc] initWithTabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor] backgroundColor:[self tabBackgroundColor]]];
+    } else {
+        [self setHeader:[[GUITabScrollView alloc] initWithTabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
+    }
+    
   [[self header] setTabScrollDelegate:self];
   
   frame = [[self view] frame];

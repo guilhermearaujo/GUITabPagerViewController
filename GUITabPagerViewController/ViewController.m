@@ -42,13 +42,23 @@
 }
 
 - (CGFloat)tabHeight {
-  // Default: 44.0f
   return 50.0f;
 }
 
 - (UIColor *)tabColor {
-  // Default: [UIColor orangeColor];
   return [UIColor purpleColor];
+}
+
+- (UIColor *)textColor {
+    return [UIColor redColor];
+}
+
+- (UIFont *)textFont {
+    return [UIFont systemFontOfSize:17];
+}
+
+- (UIColor *)tabBackgroundColor {
+    return [UIColor greenColor];
 }
 
 @end
