@@ -20,8 +20,8 @@
 
 @implementation GUITabScrollView
 
-- (instancetype)initWithTabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color {
-  self = [super init];
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color {
+  self = [super initWithFrame:frame];
   
   if (self) {
     [self setShowsHorizontalScrollIndicator:NO];
@@ -37,6 +37,8 @@
     
     [self setContentSize:CGSizeMake(MAX(width, self.frame.size.width), height)];
     
+    CGFloat widthDifference = MAX(0, self.frame.size.width * 1.0f - width);
+    
     UIView *contentView = [UIView new];
     [contentView setFrame:CGRectMake(0, 0, MAX(width, self.frame.size.width), height)];
     [contentView setBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
@@ -47,10 +49,11 @@
     NSMutableDictionary *views = [NSMutableDictionary dictionary];
     int index = 0;
     
+    
     for (UIView *tab in tabViews) {
       [contentView addSubview:tab];
       [tab setTranslatesAutoresizingMaskIntoConstraints:NO];
-      [VFL appendFormat:@"-10-[T%d(%f)]", index, tab.frame.size.width];
+      [VFL appendFormat:@"-%f-[T%d(%f)]", index ? 10.0f : 10.0 + widthDifference / 2, index, tab.frame.size.width];
       [views setObject:tab forKey:[NSString stringWithFormat:@"T%d", index]];
       
       [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=1000)-[T]-10-|"
@@ -96,7 +99,7 @@
                                                                       toItem:contentView
                                                                    attribute:NSLayoutAttributeLeading
                                                                   multiplier:1.0f
-                                                                    constant:5.0f]];
+                                                                    constant:widthDifference / 2 + 5]];
     
     [self setTabIndicatorWidth:[NSLayoutConstraint constraintWithItem:tabIndicator
                                                             attribute:NSLayoutAttributeWidth
@@ -118,7 +121,7 @@
 }
 
 - (void)animateToTabAtIndex:(NSInteger)index {
-  CGFloat x = 5;
+  CGFloat x = [[self tabViews][0] frame].origin.x - 5;
   
   for (int i = 0; i < index; i++) {
     x += [[self tabViews][i] frame].size.width + 10;
