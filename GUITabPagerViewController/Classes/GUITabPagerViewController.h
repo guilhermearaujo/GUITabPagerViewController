@@ -13,6 +13,7 @@
 @interface GUITabPagerViewController : UIViewController
 
 @property (weak, nonatomic) id<GUITabPagerDataSource> dataSource;
+@property (strong, nonatomic) IBOutlet UIView *pageContainerView;
 
 - (void)reloadData;
 

@@ -14,22 +14,30 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad {
-  [super viewDidLoad];
-  [self setDataSource:self];
-  [self reloadData];
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self setDataSource:self];
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+//    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+    [self.navigationController.navigationBar setTranslucent:YES];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self reloadData];
 }
 
 - (NSInteger)numberOfViewControllers {
-  return 5;
+    return 5;
 }
 
 - (UIViewController *)viewControllerForIndex:(NSInteger)index {
-  UIViewController *vc = [UIViewController new];
-  [[vc view] setBackgroundColor:[UIColor colorWithRed:arc4random_uniform(255) / 255.0f
-                                                green:arc4random_uniform(255) / 255.0f
-                                                 blue:arc4random_uniform(255) / 255.0f alpha:1]];
-  return vc;
+    UIViewController *vc = [UIViewController new];
+    [[vc view] setBackgroundColor:[UIColor colorWithRed:arc4random_uniform(255) / 255.0f
+                                                  green:arc4random_uniform(255) / 255.0f
+                                                   blue:arc4random_uniform(255) / 255.0f alpha:1]];
+    return vc;
 }
 
 // Implement either viewForTabAtIndex: or titleForTabAtIndex:
@@ -38,15 +46,15 @@
 //}
 
 - (NSString *)titleForTabAtIndex:(NSInteger)index {
-  return [NSString stringWithFormat:@"Tab #%ld", (long) index + 1];
+    return [NSString stringWithFormat:@"Tab #%ld", (long) index + 1];
 }
 
 - (CGFloat)tabHeight {
-  return 50.0f;
+    return 50.0f;
 }
 
 - (UIColor *)tabColor {
-  return [UIColor purpleColor];
+    return [UIColor purpleColor];
 }
 
 - (UIColor *)textColor {
