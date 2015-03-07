@@ -150,8 +150,9 @@
   if ([self header]) {
     [[self header] removeFromSuperview];
   }
-  
-  [self setHeader:[[GUITabScrollView alloc] initWithTabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
+  CGRect tabFrame = self.view.frame;
+  tabFrame.size.height = [self headerHeight];
+  [self setHeader:[[GUITabScrollView alloc] initWithFrame:tabFrame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
   [[self header] setTabScrollDelegate:self];
   
   frame = [[self view] frame];
