@@ -26,6 +26,7 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
+  [self setEdgesForExtendedLayout:UIRectEdgeNone];
   
   [self setPageViewController:[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
                                                               navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
