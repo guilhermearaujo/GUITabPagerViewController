@@ -67,7 +67,7 @@
       index++;
     }
     
-    [VFL appendString:@"-(>=1000)-|"];
+    [VFL appendString:[NSString stringWithFormat:@"-%f-|", 10.0f + widthDifference / 2]];
     
     [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:VFL
                                                                         options:0
