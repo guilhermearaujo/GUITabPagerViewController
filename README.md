@@ -25,6 +25,10 @@ To use it, you should create a view controller that extends `GUITabPagerViewCont
 - (void)viewDidLoad {
   [super viewDidLoad];
   [self setDataSource:self];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
   [self reloadData];
 }
 ```
