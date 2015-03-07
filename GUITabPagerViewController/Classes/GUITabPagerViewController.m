@@ -46,6 +46,10 @@
   [self.pageViewController didMoveToParentViewController:self];
 }
 
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+  [self reloadTabs];
+}
+
 - (void)didReceiveMemoryWarning {
   [super didReceiveMemoryWarning];
   // Dispose of any resources that can be recreated.
@@ -91,16 +95,31 @@
   [self setViewControllers:[NSMutableArray array]];
   [self setTabTitles:[NSMutableArray array]];
   
-  NSInteger number = [[self dataSource] numberOfViewControllers];
-  if (number == 0)
-    return;
-  
-  for (int i = 0; i < number; i++) {
+  for (int i = 0; i < [[self dataSource] numberOfViewControllers]; i++) {
     [[self viewControllers] addObject:[[self dataSource] viewControllerForIndex:i]];
     if ([[self dataSource] respondsToSelector:@selector(titleForTabAtIndex:)]) {
       [[self tabTitles] addObject:[[self dataSource] titleForTabAtIndex:i]];
-     }
+    }
   }
+  
+  [self reloadTabs];
+  
+  CGRect frame = [[self view] frame];
+  frame.origin.y = [self headerHeight];
+  frame.size.height -= [self headerHeight];
+  
+  [[[self pageViewController] view] setFrame:frame];
+  
+  [self.pageViewController setViewControllers:@[[self viewControllers][0]]
+                                    direction:UIPageViewControllerNavigationDirectionReverse
+                                     animated:NO
+                                   completion:nil];
+  [self setCurrentIndex:0];
+}
+
+- (void)reloadTabs {
+  if ([[self dataSource] numberOfViewControllers] == 0)
+    return;
   
   if ([[self dataSource] respondsToSelector:@selector(tabHeight)]) {
     [self setHeaderHeight:[[self dataSource] tabHeight]];
@@ -113,25 +132,13 @@
   } else {
     [self setHeaderColor:[UIColor orangeColor]];
   }
-
-  CGRect frame = [[self view] frame];
-  frame.origin.y += [self headerHeight];
-  frame.size.height -= [self headerHeight];
-  
-  [[[self pageViewController] view] setFrame:frame];
-  
-  [self.pageViewController setViewControllers:@[[self viewControllers][0]]
-                                    direction:UIPageViewControllerNavigationDirectionReverse
-                                     animated:NO
-                                   completion:nil];
-  [self setCurrentIndex:0];
   
   NSMutableArray *tabViews = [NSMutableArray array];
   
   if ([[self dataSource] respondsToSelector:@selector(viewForTabAtIndex:)]) {
     for (int i = 0; i < [[self viewControllers] count]; i++) {
       [tabViews addObject:[[self dataSource] viewForTabAtIndex:i]];
-     }
+    }
   } else {
     for (NSString *title in [self tabTitles]) {
       UILabel *label = [UILabel new];
@@ -150,14 +157,12 @@
   if ([self header]) {
     [[self header] removeFromSuperview];
   }
-  CGRect tabFrame = self.view.frame;
-  tabFrame.size.height = [self headerHeight];
-  [self setHeader:[[GUITabScrollView alloc] initWithFrame:tabFrame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
+  CGRect frame = self.view.frame;
+  frame.origin.y = 0;
+  frame.size.height = [self headerHeight];
+  [self setHeader:[[GUITabScrollView alloc] initWithFrame:frame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
   [[self header] setTabScrollDelegate:self];
   
-  frame = [[self view] frame];
-  frame.size.height = [self headerHeight];
-  [[self header] setFrame:frame];
   [[self view] addSubview:[self header]];
 }
 

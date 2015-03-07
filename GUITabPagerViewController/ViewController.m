@@ -17,6 +17,10 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   [self setDataSource:self];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
   [self reloadData];
 }
 
