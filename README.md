@@ -2,13 +2,6 @@
 
 <img src="preview.gif" alt="Animated gif">
 
-## Features
-* Tabs
-* Progress bar also shows the buffer load progress
-* Customizable progress bar tint colors
-* Automatically detect whether the stream is a fixed-length or undefined (as in a live stream) and adjusts the UI accordingly
-* AirPlay integration
-
 ## Installation
 **CocoaPods** (recommended)  
 Add the following line to your `Podfile`:  
