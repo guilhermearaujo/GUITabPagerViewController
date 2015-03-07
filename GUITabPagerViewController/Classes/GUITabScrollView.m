@@ -56,7 +56,7 @@
       [VFL appendFormat:@"-%f-[T%d(%f)]", index ? 10.0f : 10.0 + widthDifference / 2, index, tab.frame.size.width];
       [views setObject:tab forKey:[NSString stringWithFormat:@"T%d", index]];
       
-      [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(<=1000)-[T]-10-|"
+      [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[T]-2-|"
                                                                           options:0
                                                                           metrics:nil
                                                                             views:@{@"T": tab}]];
