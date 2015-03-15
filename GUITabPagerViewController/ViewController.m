@@ -8,21 +8,26 @@
 
 #import "ViewController.h"
 
-@interface ViewController () <GUITabPagerDataSource>
+@interface ViewController () <GUITabPagerDataSource, GUITabPagerDelegate>
 
 @end
 
 @implementation ViewController
 
+#pragma mark - View Controller Life Cycle
+
 - (void)viewDidLoad {
   [super viewDidLoad];
   [self setDataSource:self];
+  [self setDelegate:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   [self reloadData];
 }
+
+#pragma mark - Tab Pager Data Source
 
 - (NSInteger)numberOfViewControllers {
   return 5;
@@ -53,6 +58,16 @@
 - (UIColor *)tabColor {
   // Default: [UIColor orangeColor];
   return [UIColor purpleColor];
+}
+
+#pragma mark - Tab Pager Delegate
+
+- (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index {
+  NSLog(@"Will transition from tab %ld to %ld", [self selectedIndex], (long)index);
+}
+
+- (void)tabPager:(GUITabPagerViewController *)tabPager didTransitionToTabAtIndex:(NSInteger)index {
+  NSLog(@"Did transition to tab %ld", (long)index);
 }
 
 @end
