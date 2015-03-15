@@ -13,7 +13,7 @@
 
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) GUITabScrollView *header;
-@property (assign, nonatomic) NSInteger currentIndex;
+@property (assign, nonatomic) NSInteger selectedIndex;
 
 @property (strong, nonatomic) NSMutableArray *viewControllers;
 @property (strong, nonatomic) NSMutableArray *tabTitles;
@@ -80,30 +80,30 @@
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
-  [self setCurrentIndex:[[self viewControllers] indexOfObject:[[self pageViewController] viewControllers][0]]];
-  [[self header] animateToTabAtIndex:[self currentIndex]];
+  [self setSelectedIndex:[[self viewControllers] indexOfObject:[[self pageViewController] viewControllers][0]]];
+  [[self header] animateToTabAtIndex:[self selectedIndex]];
   
   if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
-    [[self delegate] tabPager:self didTransitionToTabAtIndex:[self currentIndex]];
+    [[self delegate] tabPager:self didTransitionToTabAtIndex:[self selectedIndex]];
   }
 }
 
 #pragma mark - Tab Scroll View Delegate
 
 - (void)tabScrollView:(GUITabScrollView *)tabScrollView didSelectTabAtIndex:(NSInteger)index {
-  if (index != [self currentIndex]) {
+  if (index != [self selectedIndex]) {
     if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
       [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
     }
     
     [[self pageViewController]  setViewControllers:@[[self viewControllers][index]]
-                                         direction:(index > [self currentIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse
+                                         direction:(index > [self selectedIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse
                                           animated:YES
                                         completion:^(BOOL finished) {
-                                          [self setCurrentIndex:index];
+                                          [self setSelectedIndex:index];
                                           
                                           if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
-                                            [[self delegate] tabPager:self didTransitionToTabAtIndex:[self currentIndex]];
+                                            [[self delegate] tabPager:self didTransitionToTabAtIndex:[self selectedIndex]];
                                           }
                                         }];
   }
@@ -132,7 +132,7 @@
                                     direction:UIPageViewControllerNavigationDirectionReverse
                                      animated:NO
                                    completion:nil];
-  [self setCurrentIndex:0];
+  [self setSelectedIndex:0];
 }
 
 - (void)reloadTabs {
