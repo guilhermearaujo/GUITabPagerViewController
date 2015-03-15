@@ -5,7 +5,7 @@
 ## Installation
 **CocoaPods** (recommended)  
 Add the following line to your `Podfile`:  
-`pod 'GUITabPagerViewController', '~> 0.0.3'`  
+`pod 'GUITabPagerViewController', '~> 0.0.4'`  
 And then add `#import <GUITabPagerViewController.h>` to your view controller.
 
 **Manual**  
@@ -29,13 +29,16 @@ To use it, you should create a view controller that extends `GUITabPagerViewCont
 Then, implement the `GUITabPagerDataSource` to populate the view.
 The data source has a couple of required methods, and a few more optional.
 
-### Required Methods
+### Data Source
+The data source methods will allow you to provide content to your tab pager view controller.
+
+#### Required Methods
 ```obj-c
 - (NSInteger)numberOfViewControllers;
 - (UIViewController *)viewControllerForIndex:(NSInteger)index;
 ```
 
-### Optional Methods
+#### Optional Methods
 **Note that despite being optional, the tab setup will require you to return either a `UIView` or an `NSString` to work.**
 
 ```obj-c
@@ -44,3 +47,24 @@ The data source has a couple of required methods, and a few more optional.
 - (CGFloat)tabHeight;  // Default value: 44.0f
 - (UIColor *)tabColor; // Default value: [UIColor orangeColor]
 ```
+
+### Delegate
+The delegate methods report events that happened in the tab pager view controller.
+
+#### Optional Methods
+```obj-c
+- (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index;
+- (void)tabPager:(GUITabPagerViewController *)tabPager didTransitionToTabAtIndex:(NSInteger)index;
+```
+
+### Public Methods
+There are two public methods:
+
+```obj-c
+- (void)reloadData;
+- (NSInteger)selectedIndex;
+```
+
+`reloadData` will refresh the content of the tab pager view controller. Make sure to provide the data source before reloading the content.
+
+`selectedIndex` will return the index of the current selected tab.
