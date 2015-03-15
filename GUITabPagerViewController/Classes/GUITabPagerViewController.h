@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @protocol GUITabPagerDataSource;
+@protocol GUITabPagerDelegate;
 
 @interface GUITabPagerViewController : UIViewController
 
 @property (weak, nonatomic) id<GUITabPagerDataSource> dataSource;
+@property (weak, nonatomic) id<GUITabPagerDelegate> delegate;
 
 - (void)reloadData;
 
@@ -29,5 +31,13 @@
 - (NSString *)titleForTabAtIndex:(NSInteger)index;
 - (CGFloat)tabHeight;
 - (UIColor *)tabColor;
+
+@end
+
+@protocol GUITabPagerDelegate <NSObject>
+
+@optional
+- (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index;
+- (void)tabPager:(GUITabPagerViewController *)tabPager didTransitionToTabAtIndex:(NSInteger)index;
 
 @end

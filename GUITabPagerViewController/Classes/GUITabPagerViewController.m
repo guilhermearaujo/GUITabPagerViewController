@@ -73,22 +73,39 @@
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
   NSInteger index = [[self viewControllers] indexOfObject:pendingViewControllers[0]];
   [[self header] animateToTabAtIndex:index];
+  
+  if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
+    [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
+  }
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
   [self setCurrentIndex:[[self viewControllers] indexOfObject:[[self pageViewController] viewControllers][0]]];
   [[self header] animateToTabAtIndex:[self currentIndex]];
+  
+  if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
+    [[self delegate] tabPager:self didTransitionToTabAtIndex:[self currentIndex]];
+  }
 }
 
 #pragma mark - Tab Scroll View Delegate
 
 - (void)tabScrollView:(GUITabScrollView *)tabScrollView didSelectTabAtIndex:(NSInteger)index {
   if (index != [self currentIndex]) {
+    if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
+      [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
+    }
+    
     [[self pageViewController]  setViewControllers:@[[self viewControllers][index]]
                                          direction:(index > [self currentIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse
                                           animated:YES
-                                        completion:nil];
-    [self setCurrentIndex:index];
+                                        completion:^(BOOL finished) {
+                                          [self setCurrentIndex:index];
+                                          
+                                          if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
+                                            [[self delegate] tabPager:self didTransitionToTabAtIndex:[self currentIndex]];
+                                          }
+                                        }];
   }
 }
 
