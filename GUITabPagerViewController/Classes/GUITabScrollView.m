@@ -20,7 +20,7 @@
 
 @implementation GUITabScrollView
 
-- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color {
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor {
   self = [super initWithFrame:frame];
   
   if (self) {
@@ -41,7 +41,7 @@
     
     UIView *contentView = [UIView new];
     [contentView setFrame:CGRectMake(0, 0, MAX(width, self.frame.size.width), height)];
-    [contentView setBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
+    [contentView setBackgroundColor:backgroundColor];
     [contentView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:contentView];
     

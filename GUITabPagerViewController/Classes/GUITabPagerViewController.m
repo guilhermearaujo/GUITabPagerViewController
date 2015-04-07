@@ -18,6 +18,7 @@
 @property (strong, nonatomic) NSMutableArray *viewControllers;
 @property (strong, nonatomic) NSMutableArray *tabTitles;
 @property (strong, nonatomic) UIColor *headerColor;
+@property (strong, nonatomic) UIColor *tabBackgroundColor;
 @property (assign, nonatomic) CGFloat headerHeight;
 
 @end
@@ -151,6 +152,12 @@
     [self setHeaderColor:[UIColor orangeColor]];
   }
   
+  if ([[self dataSource] respondsToSelector:@selector(tabBackgroundColor)]) {
+    [self setTabBackgroundColor:[[self dataSource] tabBackgroundColor]];
+  } else {
+    [self setTabBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
+  }
+  
   NSMutableArray *tabViews = [NSMutableArray array];
   
   if ([[self dataSource] respondsToSelector:@selector(viewForTabAtIndex:)]) {
@@ -178,7 +185,7 @@
   CGRect frame = self.view.frame;
   frame.origin.y = 0;
   frame.size.height = [self headerHeight];
-  [self setHeader:[[GUITabScrollView alloc] initWithFrame:frame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor]]];
+  [self setHeader:[[GUITabScrollView alloc] initWithFrame:frame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor] backgroundColor:[self tabBackgroundColor]]];
   [[self header] setTabScrollDelegate:self];
   
   [[self view] addSubview:[self header]];

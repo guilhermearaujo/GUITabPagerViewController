@@ -60,6 +60,11 @@
   return [UIColor purpleColor];
 }
 
+- (UIColor *)tabBackgroundColor {
+  // Default: [UIColor colorWithWhite:0.95f alpha:1.0f];
+  return [UIColor lightTextColor];
+}
+
 #pragma mark - Tab Pager Delegate
 
 - (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index {

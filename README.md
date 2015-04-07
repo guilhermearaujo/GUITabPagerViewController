@@ -46,6 +46,7 @@ The data source methods will allow you to provide content to your tab pager view
 - (NSString *)titleForTabAtIndex:(NSInteger)index;
 - (CGFloat)tabHeight;  // Default value: 44.0f
 - (UIColor *)tabColor; // Default value: [UIColor orangeColor]
+- (UIColor *)tabBackgroundColor; // Default: [UIColor colorWithWhite:0.95f alpha:1.0f];
 ```
 
 ### Delegate
