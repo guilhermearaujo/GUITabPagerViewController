@@ -65,6 +65,11 @@
   return [UIColor lightTextColor];
 }
 
+- (UIFont *)titleFont {
+  // Default: [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
+  return [UIFont fontWithName:@"HelveticaNeue-Bold" size:20.0f];
+}
+
 #pragma mark - Tab Pager Delegate
 
 - (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index {

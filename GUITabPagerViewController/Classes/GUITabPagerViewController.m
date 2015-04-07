@@ -165,11 +165,17 @@
       [tabViews addObject:[[self dataSource] viewForTabAtIndex:i]];
     }
   } else {
+    UIFont *font;
+    if ([[self dataSource] respondsToSelector:@selector(titleFont)]) {
+      font = [[self dataSource] titleFont];
+    } else {
+      font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
+    }
     for (NSString *title in [self tabTitles]) {
       UILabel *label = [UILabel new];
       [label setText:title];
       [label setTextAlignment:NSTextAlignmentCenter];
-      [label setFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f]];
+      [label setFont:font];
       [label sizeToFit];
       
       CGRect frame = [label frame];

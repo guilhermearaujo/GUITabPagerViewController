@@ -33,6 +33,7 @@
 - (CGFloat)tabHeight;
 - (UIColor *)tabColor;
 - (UIColor *)tabBackgroundColor;
+- (UIFont *)titleFont;
 
 @end
 
