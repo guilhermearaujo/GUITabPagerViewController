@@ -115,9 +115,17 @@
   [self setTabTitles:[NSMutableArray array]];
   
   for (int i = 0; i < [[self dataSource] numberOfViewControllers]; i++) {
-    [[self viewControllers] addObject:[[self dataSource] viewControllerForIndex:i]];
+    UIViewController *viewController;
+    
+    if ((viewController = [[self dataSource] viewControllerForIndex:i]) != nil) {
+      [[self viewControllers] addObject:viewController];
+    }
+    
     if ([[self dataSource] respondsToSelector:@selector(titleForTabAtIndex:)]) {
-      [[self tabTitles] addObject:[[self dataSource] titleForTabAtIndex:i]];
+      NSString *title;
+      if ((title = [[self dataSource] titleForTabAtIndex:i]) != nil) {
+        [[self tabTitles] addObject:title];
+      }
     }
   }
   
@@ -162,7 +170,10 @@
   
   if ([[self dataSource] respondsToSelector:@selector(viewForTabAtIndex:)]) {
     for (int i = 0; i < [[self viewControllers] count]; i++) {
-      [tabViews addObject:[[self dataSource] viewForTabAtIndex:i]];
+      UIView *view;
+      if ((view = [[self dataSource] viewForTabAtIndex:i]) != nil) {
+        [tabViews addObject:view];
+      }
     }
   } else {
     UIFont *font;
