@@ -34,6 +34,7 @@
 - (UIColor *)tabColor;
 - (UIColor *)tabBackgroundColor;
 - (UIFont *)titleFont;
+- (UIColor *)titleColor;
 
 @end
 

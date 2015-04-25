@@ -1,5 +1,6 @@
 # GUITabPagerViewController
 
+[![CocoaPods](https://img.shields.io/cocoapods/v/GUITabPagerViewController.svg)](http://cocoadocs.org/docsets/GUITabPagerViewController) [![CocoaPods](https://img.shields.io/cocoapods/l/GUITabPagerViewController.svg)]() [![CocoaPods](https://img.shields.io/cocoapods/p/GUITabPagerViewController.svg)]()
 <img src="preview.gif" alt="Animated gif">
 
 ## Installation
@@ -22,9 +23,8 @@ To use it, you should create a view controller that extends `GUITabPagerViewCont
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  [self reloadData];
-}
-```
+  [self reloadData]; }
+``
 
 Then, implement the `GUITabPagerDataSource` to populate the view.
 The data source has a couple of required methods, and a few more optional.
@@ -48,6 +48,7 @@ The data source methods will allow you to provide content to your tab pager view
 - (UIColor *)tabColor; // Default value: [UIColor orangeColor]
 - (UIColor *)tabBackgroundColor; // Default: [UIColor colorWithWhite:0.95f alpha:1.0f];
 - (UIFont *)titleFont; // Default: [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
+- (UIColor *)titleColor; // Default: [UIColor blackColor];
 ```
 
 ### Delegate

@@ -182,11 +182,20 @@
     } else {
       font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
     }
+    
+    UIColor *color;
+    if ([[self dataSource] respondsToSelector:@selector(titleColor)]) {
+      color = [[self dataSource] titleColor];
+    } else {
+      color = [UIColor blackColor];
+    }
+    
     for (NSString *title in [self tabTitles]) {
       UILabel *label = [UILabel new];
       [label setText:title];
       [label setTextAlignment:NSTextAlignmentCenter];
       [label setFont:font];
+      [label setTextColor:color];
       [label sizeToFit];
       
       CGRect frame = [label frame];
