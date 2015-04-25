@@ -7,7 +7,7 @@
 ## Installation
 **CocoaPods** (recommended)  
 Add the following line to your `Podfile`:  
-`pod 'GUITabPagerViewController', '~> 0.0.5'`  
+`pod 'GUITabPagerViewController', '~> 0.0.6'`  
 And then add `#import <GUITabPagerViewController.h>` to your view controller.
 
 **Manual**  
