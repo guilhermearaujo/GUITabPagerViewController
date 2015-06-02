@@ -19,6 +19,9 @@
 - (void)reloadData;
 - (NSInteger)selectedIndex;
 
+- (void)selectTabbarIndex:(NSInteger)index;
+- (void)selectTabbarIndex:(NSInteger)index animation:(BOOL)animation;
+
 @end
 
 @protocol GUITabPagerDataSource <NSObject>

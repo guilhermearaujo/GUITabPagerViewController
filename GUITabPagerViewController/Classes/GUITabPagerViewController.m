@@ -217,5 +217,20 @@
   [[self view] addSubview:[self header]];
 }
 
+#pragma mark - Public Methods
+
+- (void)selectTabbarIndex:(NSInteger)index {
+    [self selectTabbarIndex:index animation:NO];
+}
+
+- (void)selectTabbarIndex:(NSInteger)index animation:(BOOL)animation {
+    [self.pageViewController setViewControllers:@[[self viewControllers][index]]
+                                      direction:UIPageViewControllerNavigationDirectionReverse
+                                       animated:animation
+                                     completion:nil];
+    [[self header] animateToTabAtIndex:index];
+    [self setSelectedIndex:index];
+}
+
 @end
 
