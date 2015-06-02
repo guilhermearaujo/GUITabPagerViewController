@@ -228,9 +228,8 @@
                                       direction:UIPageViewControllerNavigationDirectionReverse
                                        animated:animation
                                      completion:nil];
-    [[self header] animateToTabAtIndex:index];
+    [[self header] animateToTabAtIndex:index animated:animation];
     [self setSelectedIndex:index];
 }
 
 @end
-

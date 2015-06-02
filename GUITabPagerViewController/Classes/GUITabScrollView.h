@@ -16,6 +16,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor;
 - (void)animateToTabAtIndex:(NSInteger)index;
+- (void)animateToTabAtIndex:(NSInteger)index animated:(BOOL)animated;
 
 @end
 
