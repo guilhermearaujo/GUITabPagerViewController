@@ -14,7 +14,9 @@
 
 @property (weak, nonatomic) id<GUITabScrollDelegate> tabScrollDelegate;
 
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor selectedTabIndex:(NSInteger)index;
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor;
+
 - (void)animateToTabAtIndex:(NSInteger)index;
 - (void)animateToTabAtIndex:(NSInteger)index animated:(BOOL)animated;
 
