@@ -211,11 +211,25 @@
   CGRect frame = self.view.frame;
   frame.origin.y = 0;
   frame.size.height = [self headerHeight];
-  [self setHeader:[[GUITabScrollView alloc] initWithFrame:frame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor] backgroundColor:[self tabBackgroundColor]]];
+  [self setHeader:[[GUITabScrollView alloc] initWithFrame:frame tabViews:tabViews tabBarHeight:[self headerHeight] tabColor:[self headerColor] backgroundColor:[self tabBackgroundColor] selectedTabIndex:self.selectedIndex]];
   [[self header] setTabScrollDelegate:self];
   
   [[self view] addSubview:[self header]];
 }
 
-@end
+#pragma mark - Public Methods
 
+- (void)selectTabbarIndex:(NSInteger)index {
+  [self selectTabbarIndex:index animation:NO];
+}
+
+- (void)selectTabbarIndex:(NSInteger)index animation:(BOOL)animation {
+  [self.pageViewController setViewControllers:@[[self viewControllers][index]]
+                                    direction:UIPageViewControllerNavigationDirectionReverse
+                                     animated:animation
+                                   completion:nil];
+  [[self header] animateToTabAtIndex:index animated:animation];
+  [self setSelectedIndex:index];
+}
+
+@end
