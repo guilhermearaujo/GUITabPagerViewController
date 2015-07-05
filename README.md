@@ -25,7 +25,7 @@ To use it, you should create a view controller that extends `GUITabPagerViewCont
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   [self reloadData]; }
-``
+```
 
 Then, implement the `GUITabPagerDataSource` to populate the view.
 The data source has a couple of required methods, and a few more optional.
