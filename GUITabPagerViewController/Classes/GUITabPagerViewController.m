@@ -9,7 +9,10 @@
 #import "GUITabPagerViewController.h"
 #import "GUITabScrollView.h"
 
-@interface GUITabPagerViewController () <GUITabScrollDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate>
+@interface GUITabPagerViewController () <GUITabScrollDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+{
+  BOOL tapped;
+}
 
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) GUITabScrollView *header;
@@ -37,8 +40,12 @@
     if ([view isKindOfClass:[UIScrollView class]]) {
       [(UIScrollView *)view setCanCancelContentTouches:YES];
       [(UIScrollView *)view setDelaysContentTouches:NO];
+      [(UIScrollView *)view setDelegate:self];
     }
   }
+
+  tapped = false;
+  self.isProgressive = YES;
 
   [[self pageViewController] setDataSource:self];
   [[self pageViewController] setDelegate:self];
@@ -50,6 +57,7 @@
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
   [self reloadTabs];
+  [self selectTabbarIndex:self.selectedIndex];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -72,12 +80,14 @@
 #pragma mark - Page View Delegate
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
-  NSInteger index = [[self viewControllers] indexOfObject:pendingViewControllers[0]];
-  [[self header] animateToTabAtIndex:index];
-  
-  if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
-    [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
-  }
+    if (!self.isProgressive) {
+        NSInteger index = [[self viewControllers] indexOfObject:pendingViewControllers[0]];
+        [[self header] animateToTabAtIndex:index];
+        
+        if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
+            [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
+        }
+    }
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
@@ -96,7 +106,7 @@
     if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
       [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
     }
-    
+    tapped = true;
     [[self pageViewController]  setViewControllers:@[[self viewControllers][index]]
                                          direction:(index > [self selectedIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse
                                           animated:YES
@@ -215,6 +225,34 @@
   [[self header] setTabScrollDelegate:self];
   
   [[self view] addSubview:[self header]];
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+  if (self.isProgressive) {
+    CGPoint offset = scrollView.contentOffset;
+    float progress = 0;
+    NSInteger fromIndex = self.selectedIndex;
+    NSInteger toIndex = -1;
+    progress = (offset.x - self.view.bounds.size.width) / self.view.bounds.size.width;
+    if (progress > 0) {
+      if (fromIndex < [[self viewControllers] count] - 1) {
+        toIndex = fromIndex + 1;
+      }
+    }
+    else {
+      if (fromIndex > 0) {
+        toIndex = fromIndex - 1;
+      }
+    }
+    if (!tapped) {
+      [[self header] animateFromTabAtIndex:fromIndex toTabAtIndex:toIndex withProgress:progress];
+    }
+    else if (fabs(progress) >= 0.999999 || fabs(progress) <= 0.000001)
+      tapped = false;
+  }
 }
 
 #pragma mark - Public Methods

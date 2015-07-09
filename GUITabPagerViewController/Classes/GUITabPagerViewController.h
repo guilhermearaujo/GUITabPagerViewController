@@ -15,6 +15,7 @@
 
 @property (weak, nonatomic) id<GUITabPagerDataSource> dataSource;
 @property (weak, nonatomic) id<GUITabPagerDelegate> delegate;
+@property (assign, nonatomic) BOOL isProgressive;
 
 - (void)reloadData;
 - (NSInteger)selectedIndex;

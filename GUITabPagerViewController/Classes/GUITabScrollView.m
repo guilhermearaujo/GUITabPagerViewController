@@ -168,11 +168,36 @@
                      }];
 }
 
+- (void)animateFromTabAtIndex:(NSInteger)fromIndex toTabAtIndex:(NSInteger)toIndex withProgress:(float)progress {
+    if (fromIndex != -1 && toIndex != -1) {
+        CGFloat x = [[self tabViews][0] frame].origin.x - 5;
+        CGFloat w = [[self tabViews][fromIndex] frame].size.width + 10;
+        for (int i = 0; i < fromIndex; i++) {
+            x += [[self tabViews][i] frame].size.width + 10;
+        }
+        CGFloat p = x - (self.frame.size.width - w) / 2;
+        x += fabs([[self tabViews][toIndex] frame].origin.x - [[self tabViews][fromIndex] frame].origin.x) * progress;
+        
+        
+        w += ([[self tabViews][toIndex] frame].size.width - [[self tabViews][fromIndex] frame].size.width) * fabs(progress);
+        
+        
+        CGFloat min = 0;
+        CGFloat max = MAX(0, self.contentSize.width - self.frame.size.width);
+        
+        [self setContentOffset:CGPointMake(MAP(p, min, max), 0)];
+        [[self tabIndicatorDisplacement] setConstant:x];
+        [[self tabIndicatorWidth] setConstant:w];
+        [self layoutIfNeeded];
+        
+    }
+}
+
 - (void)tabTapHandler:(UITapGestureRecognizer *)gestureRecognizer {
   if ([[self tabScrollDelegate] respondsToSelector:@selector(tabScrollView:didSelectTabAtIndex:)]) {
     NSInteger index = [[gestureRecognizer view] tag];
-    [[self tabScrollDelegate] tabScrollView:self didSelectTabAtIndex:index];
     [self animateToTabAtIndex:index];
+    [[self tabScrollDelegate] tabScrollView:self didSelectTabAtIndex:index];
   }
 }
 
