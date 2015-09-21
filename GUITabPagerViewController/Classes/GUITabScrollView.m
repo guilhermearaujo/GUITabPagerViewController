@@ -110,7 +110,7 @@
     [tabIndicator setBackgroundColor:color];
     
     [self setTabIndicatorDisplacement:[NSLayoutConstraint constraintWithItem:tabIndicator
-                                                                   attribute:NSLayoutAttributeLeft
+                                                                   attribute:NSLayoutAttributeLeading
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:contentView
                                                                    attribute:NSLayoutAttributeLeading
