@@ -19,6 +19,8 @@
 
 - (void)animateToTabAtIndex:(NSInteger)index;
 - (void)animateToTabAtIndex:(NSInteger)index animated:(BOOL)animated;
+- (void)animateFromTabAtIndex:(NSInteger)fromIndex toTabAtIndex:(NSInteger)toIndex withProgress:(float)progress;
+
 
 @end
 
