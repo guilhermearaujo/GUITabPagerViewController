@@ -97,10 +97,18 @@
       [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
     }
     
+    UIPageViewControllerNavigationDirection direction = (index > [self selectedIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+
     [[self pageViewController]  setViewControllers:@[[self viewControllers][index]]
-                                         direction:(index > [self selectedIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse
+                                         direction:direction
                                           animated:YES
                                         completion:^(BOOL finished) {
+                                          if (finished) {
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                              // bug fix for UIPageViewController
+                                                [self.pageViewController setViewControllers:@[[self viewControllers][index]] direction:direction animated:NO completion:NULL];
+                                            });
+                                          }
                                           [self setSelectedIndex:index];
                                           
                                           if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
