@@ -106,7 +106,7 @@
                                           if (finished) {
                                             dispatch_async(dispatch_get_main_queue(), ^{
                                               // bug fix for UIPageViewController
-                                                [self.pageViewController setViewControllers:@[[self viewControllers][index]] direction:direction animated:NO completion:NULL];
+                                                [self.pageViewController setViewControllers:@[[self viewControllers][index]] direction:direction animated:NO completion:nil];
                                             });
                                           }
                                           [self setSelectedIndex:index];
