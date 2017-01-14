@@ -30,7 +30,7 @@
 #pragma mark - Tab Pager Data Source
 
 - (NSInteger)numberOfViewControllers {
-  return 5;
+  return 10;
 }
 
 - (UIViewController *)viewControllerForIndex:(NSInteger)index {
@@ -38,6 +38,13 @@
   [[vc view] setBackgroundColor:[UIColor colorWithRed:arc4random_uniform(255) / 255.0f
                                                 green:arc4random_uniform(255) / 255.0f
                                                  blue:arc4random_uniform(255) / 255.0f alpha:1]];
+
+  UILabel *label = [[UILabel alloc] initWithFrame:vc.view.bounds];
+  label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  label.textAlignment = NSTextAlignmentCenter;
+  label.text = [self titleForTabAtIndex:index];
+  [vc.view addSubview:label];
+
   return vc;
 }
 
