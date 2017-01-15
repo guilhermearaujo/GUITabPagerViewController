@@ -61,7 +61,7 @@
   bottomLine.backgroundColor = color;
   [self addSubview:bottomLine];
 
-  CGFloat bottomLineHeight = 2.0;
+  CGFloat bottomLineHeight = 2.0f;
   NSDictionary *views = NSDictionaryOfVariableBindings(contentView, bottomLine);
   [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[bottomLine]-0-|" options:0 metrics:nil views:views]];
   [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-[bottomLine(bottomLineHeight)]-0-|" options:0 metrics:@{@"bottomLineHeight":@(bottomLineHeight)} views:views]];
@@ -98,8 +98,8 @@
   self.tabIndicator = tabIndicator;
 
   [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tabIndicator(3)]-0-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(tabIndicator)]];
-  self.indicatorWidthConstraint = [NSLayoutConstraint constraintWithItem:tabIndicator attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tabViews[0] attribute:NSLayoutAttributeWidth multiplier:1.0 constant:10.0];
-  self.indicatorCenterConstraint = [NSLayoutConstraint constraintWithItem:tabIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.tabViews[0] attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0.0];
+  self.indicatorWidthConstraint = [NSLayoutConstraint constraintWithItem:tabIndicator attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tabViews[0] attribute:NSLayoutAttributeWidth multiplier:1.0f constant:10.0f];
+  self.indicatorCenterConstraint = [NSLayoutConstraint constraintWithItem:tabIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.tabViews[0] attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f];
   [contentView addConstraints:@[self.indicatorCenterConstraint, self.indicatorWidthConstraint]];
 
   return self;
@@ -113,9 +113,9 @@
 }
 
 - (void)updateConstraints {
-  CGFloat offset = 0.0;
+  CGFloat offset = 0.0f;
   if (self.bounds.size.width > self.tabsView.frame.size.width) {
-    offset = (self.bounds.size.width - self.tabsView.frame.size.width) / 2.0;
+    offset = (self.bounds.size.width - self.tabsView.frame.size.width) / 2.0f;
   }
   self.tabsLeadingConstraint.constant = offset;
   self.tabsTrailingConstraint.constant = -offset;
@@ -130,7 +130,6 @@
 }
 
 - (void)selectTabAtIndex:(NSInteger)index animated:(BOOL)animated {
-  // self.currentIndex = index;
   CGFloat animatedDuration = 0.4f;
 
   if (!animated) {
@@ -158,17 +157,17 @@
 
 - (void)scrollToSelectedTab {
   CGRect indicatorRect = [self.tabIndicator convertRect:self.tabIndicator.bounds toView:self.superview];
-  CGFloat diff = 0.0;
+  CGFloat diff = 0.0f;
 
   if (indicatorRect.origin.x < 0) {
-    diff = indicatorRect.origin.x - 5.0;
+    diff = indicatorRect.origin.x - 5.0f;
   } else if (CGRectGetMaxX(indicatorRect) > self.frame.size.width) {
-    diff = CGRectGetMaxX(indicatorRect) - self.frame.size.width + 5.0;
+    diff = CGRectGetMaxX(indicatorRect) - self.frame.size.width + 5.0f;
   } else {
-    diff = 0.0;
+    diff = 0.0f;
   }
 
-  if (diff != 0.0) {
+  if (diff != 0.0f) {
     CGFloat xOffset = self.contentOffset.x + diff;
     self.contentOffset = CGPointMake(xOffset, self.contentOffset.y);
   }
