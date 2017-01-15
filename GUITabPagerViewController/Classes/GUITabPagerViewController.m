@@ -28,11 +28,11 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   [self setEdgesForExtendedLayout:UIRectEdgeNone];
-  
+
   [self setPageViewController:[[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
                                                               navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
                                                                             options:nil]];
-  
+
   for (UIView *view in [[[self pageViewController] view] subviews]) {
     if ([view isKindOfClass:[UIScrollView class]]) {
       [(UIScrollView *)view setCanCancelContentTouches:YES];
@@ -65,7 +65,7 @@
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
   NSInteger index = [[self viewControllers] indexOfObject:pendingViewControllers[0]];
   [[self header] selectTabAtIndex:index];
-  
+
   if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
     [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
   }
@@ -74,7 +74,7 @@
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
   [self setSelectedIndex:[[self viewControllers] indexOfObject:[[self pageViewController] viewControllers][0]]];
   [[self header] selectTabAtIndex:[self selectedIndex]];
-  
+
   if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
     [[self delegate] tabPager:self didTransitionToTabAtIndex:[self selectedIndex]];
   }
@@ -87,7 +87,7 @@
     if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
       [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
     }
-    
+
     UIPageViewControllerNavigationDirection direction = (index > [self selectedIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
 
     [[self pageViewController] setViewControllers:@[[self viewControllers][index]]
@@ -112,14 +112,14 @@
 - (void)reloadData {
   [self setViewControllers:[NSMutableArray array]];
   [self setTabTitles:[NSMutableArray array]];
-  
+
   for (int i = 0; i < [[self dataSource] numberOfViewControllers]; i++) {
     UIViewController *viewController;
-    
+
     if ((viewController = [[self dataSource] viewControllerForIndex:i]) != nil) {
       [[self viewControllers] addObject:viewController];
     }
-    
+
     if ([[self dataSource] respondsToSelector:@selector(titleForTabAtIndex:)]) {
       NSString *title;
       if ((title = [[self dataSource] titleForTabAtIndex:i]) != nil) {
@@ -127,15 +127,15 @@
       }
     }
   }
-  
+
   [self reloadTabs];
-  
+
   CGRect frame = [[self view] frame];
   frame.origin.y = [self headerHeight];
   frame.size.height -= [self headerHeight];
-  
+
   [[[self pageViewController] view] setFrame:frame];
-  
+
   [self.pageViewController setViewControllers:@[[self viewControllers][0]]
                                     direction:UIPageViewControllerNavigationDirectionReverse
                                      animated:NO
@@ -146,27 +146,27 @@
 - (void)reloadTabs {
   if ([[self dataSource] numberOfViewControllers] == 0)
     return;
-  
+
   if ([[self dataSource] respondsToSelector:@selector(tabHeight)]) {
     [self setHeaderHeight:[[self dataSource] tabHeight]];
   } else {
     [self setHeaderHeight:44.0f];
   }
-  
+
   if ([[self dataSource] respondsToSelector:@selector(tabColor)]) {
     [self setHeaderColor:[[self dataSource] tabColor]];
   } else {
     [self setHeaderColor:[UIColor orangeColor]];
   }
-  
+
   if ([[self dataSource] respondsToSelector:@selector(tabBackgroundColor)]) {
     [self setTabBackgroundColor:[[self dataSource] tabBackgroundColor]];
   } else {
     [self setTabBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
   }
-  
+
   NSMutableArray *tabViews = [NSMutableArray array];
-  
+
   if ([[self dataSource] respondsToSelector:@selector(viewForTabAtIndex:)]) {
     for (int i = 0; i < [[self viewControllers] count]; i++) {
       UIView *view;
@@ -181,14 +181,14 @@
     } else {
       font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
     }
-    
+
     UIColor *color;
     if ([[self dataSource] respondsToSelector:@selector(titleColor)]) {
       color = [[self dataSource] titleColor];
     } else {
       color = [UIColor blackColor];
     }
-    
+
     for (NSString *title in [self tabTitles]) {
       UILabel *label = [UILabel new];
       [label setText:title];
@@ -196,14 +196,14 @@
       [label setFont:font];
       [label setTextColor:color];
       [label sizeToFit];
-      
+
       CGRect frame = [label frame];
       frame.size.width = MAX(frame.size.width + 20, 85);
       [label setFrame:frame];
       [tabViews addObject:label];
     }
   }
-  
+
   if ([self header]) {
     [[self header] removeFromSuperview];
   }

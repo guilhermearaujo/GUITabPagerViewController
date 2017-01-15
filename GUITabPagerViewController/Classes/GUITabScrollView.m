@@ -28,13 +28,13 @@
 
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color selectedTabIndex:(NSInteger)index {
   self = [self initWithFrame:frame tabViews:tabViews color:color];
-  
+
   if (!self) {
     return nil;
   }
-  
+
   [self selectTabAtIndex:(index ?: 0) animated:NO];
-  
+
   return self;
 
 }
