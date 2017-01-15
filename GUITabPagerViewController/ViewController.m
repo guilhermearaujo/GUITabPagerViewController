@@ -30,7 +30,7 @@
 #pragma mark - Tab Pager Data Source
 
 - (NSInteger)numberOfViewControllers {
-  return 5;
+  return 10;
 }
 
 - (UIViewController *)viewControllerForIndex:(NSInteger)index {
