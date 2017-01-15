@@ -25,15 +25,11 @@
 #pragma mark - Initialize Methods
 
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor selectedTabIndex:(NSInteger)index {
-    self = [self initWithFrame:frame tabViews:tabViews tabBarHeight:height tabColor:color backgroundColor:backgroundColor];
-    if (self) {
-        NSInteger tabIndex = 0;
-        if (index) {
-            tabIndex = index;
-        }
-        [self _initTabbatAtIndex:index];
-    }
-    return self;
+  self = [self initWithFrame:frame tabViews:tabViews tabBarHeight:height tabColor:color backgroundColor:backgroundColor];
+  if (self) {
+    [self _initTabbatAtIndex:index ?: 0];
+  }
+  return self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabBarHeight:(CGFloat)height tabColor:(UIColor *)color backgroundColor:(UIColor *)backgroundColor {

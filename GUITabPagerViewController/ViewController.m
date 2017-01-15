@@ -78,7 +78,7 @@
 #pragma mark - Tab Pager Delegate
 
 - (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index {
-  NSLog(@"Will transition from tab %ld to %ld", [self selectedIndex], (long)index);
+  NSLog(@"Will transition from tab %ld to %ld", (long)[self selectedIndex], (long)index);
 }
 
 - (void)tabPager:(GUITabPagerViewController *)tabPager didTransitionToTabAtIndex:(NSInteger)index {
