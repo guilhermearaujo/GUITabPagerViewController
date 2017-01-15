@@ -34,11 +34,14 @@
 }
 
 - (UIViewController *)viewControllerForIndex:(NSInteger)index {
-  UIViewController *vc = [UIViewController new];
-  [[vc view] setBackgroundColor:[UIColor colorWithRed:arc4random_uniform(255) / 255.0f
-                                                green:arc4random_uniform(255) / 255.0f
-                                                 blue:arc4random_uniform(255) / 255.0f alpha:1]];
-  return vc;
+  #pragma unused (index)
+
+  UIViewController *pageVC = [UIViewController new];
+  [[pageVC view] setBackgroundColor:[UIColor colorWithRed:arc4random_uniform(255) / 255.0f
+                                                    green:arc4random_uniform(255) / 255.0f
+                                                     blue:arc4random_uniform(255) / 255.0f
+                                                    alpha:1]];
+  return pageVC;
 }
 
 // Implement either viewForTabAtIndex: or titleForTabAtIndex:
@@ -78,10 +81,14 @@
 #pragma mark - Tab Pager Delegate
 
 - (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index {
+  #pragma unused (tabPager)
+
   NSLog(@"Will transition from tab %ld to %ld", (long)[self selectedIndex], (long)index);
 }
 
 - (void)tabPager:(GUITabPagerViewController *)tabPager didTransitionToTabAtIndex:(NSInteger)index {
+  #pragma unused (tabPager)
+
   NSLog(@"Did transition to tab %ld", (long)index);
 }
 

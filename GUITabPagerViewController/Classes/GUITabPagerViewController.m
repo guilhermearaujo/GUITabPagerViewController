@@ -50,19 +50,29 @@
 
 #pragma mark - Page View Data Source
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
+      viewControllerBeforeViewController:(UIViewController *)viewController {
+  #pragma unused (pageViewController)
+
   NSUInteger pageIndex = [[self viewControllers] indexOfObject:viewController];
   return pageIndex > 0 ? [self viewControllers][pageIndex - 1]: nil;
 }
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
+       viewControllerAfterViewController:(UIViewController *)viewController {
+  #pragma unused (pageViewController)
+
   NSUInteger pageIndex = [[self viewControllers] indexOfObject:viewController];
-  return pageIndex < [[self viewControllers] count] - 1 ? [self viewControllers][pageIndex + 1]: nil;
+  return (pageIndex < [[self viewControllers] count] - 1) ?
+    [self viewControllers][pageIndex + 1] : nil;
 }
 
 #pragma mark - Page View Delegate
 
-- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers {
+- (void)pageViewController:(UIPageViewController *)pageViewController
+willTransitionToViewControllers:(NSArray *)pendingViewControllers {
+  #pragma unused (pageViewController)
+
   NSInteger index = [[self viewControllers] indexOfObject:pendingViewControllers[0]];
   [[self header] selectTabAtIndex:index];
 
@@ -71,8 +81,15 @@
   }
 }
 
-- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed {
-  [self setSelectedIndex:[[self viewControllers] indexOfObject:[[self pageViewController] viewControllers][0]]];
+- (void)pageViewController:(UIPageViewController *)pageViewController
+        didFinishAnimating:(BOOL)finished
+   previousViewControllers:(NSArray *)previousViewControllers
+       transitionCompleted:(BOOL)completed {
+  #pragma unused (pageViewController, finished, previousViewControllers, completed)
+
+  UIPageViewController *selectedViewController = [[self pageViewController] viewControllers][0];
+
+  [self setSelectedIndex:[[self viewControllers] indexOfObject:selectedViewController]];
   [[self header] selectTabAtIndex:[self selectedIndex]];
 
   if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
@@ -83,29 +100,38 @@
 #pragma mark - Tab Scroll View Delegate
 
 - (void)tabScrollView:(GUITabScrollView *)tabScrollView didSelectTabAtIndex:(NSInteger)index {
+  #pragma unused (tabScrollView)
+
   if (index != [self selectedIndex]) {
     if ([[self delegate] respondsToSelector:@selector(tabPager:willTransitionToTabAtIndex:)]) {
       [[self delegate] tabPager:self willTransitionToTabAtIndex:index];
     }
 
-    UIPageViewControllerNavigationDirection direction = (index > [self selectedIndex]) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    UIPageViewControllerNavigationDirection direction = (index > [self selectedIndex]) ?
+      UIPageViewControllerNavigationDirectionForward :
+      UIPageViewControllerNavigationDirectionReverse;
+
+    void (^completionBlock)(BOOL) = ^(BOOL finished) {
+      if (finished) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+          // bug fix for UIPageViewController http://stackoverflow.com/a/17330606
+          [self.pageViewController setViewControllers:@[[self viewControllers][index]]
+                                            direction:direction
+                                             animated:NO
+                                           completion:nil];
+        });
+      }
+      [self setSelectedIndex:index];
+
+      if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
+        [[self delegate] tabPager:self didTransitionToTabAtIndex:[self selectedIndex]];
+      }
+    };
 
     [[self pageViewController] setViewControllers:@[[self viewControllers][index]]
                                         direction:direction
                                          animated:YES
-                                       completion:^(BOOL finished) {
-                                         if (finished) {
-                                           dispatch_async(dispatch_get_main_queue(), ^{
-                                             // bug fix for UIPageViewController http://stackoverflow.com/a/17330606
-                                             [self.pageViewController setViewControllers:@[[self viewControllers][index]] direction:direction animated:NO completion:nil];
-                                           });
-                                         }
-                                         [self setSelectedIndex:index];
-
-                                         if ([[self delegate] respondsToSelector:@selector(tabPager:didTransitionToTabAtIndex:)]) {
-                                           [[self delegate] tabPager:self didTransitionToTabAtIndex:[self selectedIndex]];
-                                         }
-                                       }];
+                                       completion:completionBlock];
   }
 }
 
@@ -147,71 +173,29 @@
   if ([[self dataSource] numberOfViewControllers] == 0)
     return;
 
-  if ([[self dataSource] respondsToSelector:@selector(tabHeight)]) {
-    [self setHeaderHeight:[[self dataSource] tabHeight]];
-  } else {
-    [self setHeaderHeight:44.0f];
-  }
+  [self setupUI];
 
-  if ([[self dataSource] respondsToSelector:@selector(tabColor)]) {
-    [self setHeaderColor:[[self dataSource] tabColor]];
-  } else {
-    [self setHeaderColor:[UIColor orangeColor]];
-  }
-
-  if ([[self dataSource] respondsToSelector:@selector(tabBackgroundColor)]) {
-    [self setTabBackgroundColor:[[self dataSource] tabBackgroundColor]];
-  } else {
-    [self setTabBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
-  }
-
-  NSMutableArray *tabViews = [NSMutableArray array];
+  NSMutableArray *tabViews;
 
   if ([[self dataSource] respondsToSelector:@selector(viewForTabAtIndex:)]) {
-    for (int i = 0; i < [[self viewControllers] count]; i++) {
-      UIView *view;
-      if ((view = [[self dataSource] viewForTabAtIndex:i]) != nil) {
-        [tabViews addObject:view];
-      }
-    }
+    tabViews = [self addTabsFromViews];
   } else {
-    UIFont *font;
-    if ([[self dataSource] respondsToSelector:@selector(titleFont)]) {
-      font = [[self dataSource] titleFont];
-    } else {
-      font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
-    }
-
-    UIColor *color;
-    if ([[self dataSource] respondsToSelector:@selector(titleColor)]) {
-      color = [[self dataSource] titleColor];
-    } else {
-      color = [UIColor blackColor];
-    }
-
-    for (NSString *title in [self tabTitles]) {
-      UILabel *label = [UILabel new];
-      [label setText:title];
-      [label setTextAlignment:NSTextAlignmentCenter];
-      [label setFont:font];
-      [label setTextColor:color];
-      [label sizeToFit];
-
-      CGRect frame = [label frame];
-      frame.size.width = MAX(frame.size.width + 20, 85);
-      [label setFrame:frame];
-      [tabViews addObject:label];
-    }
+    tabViews = [self addTabsFromTitles];
   }
 
   if ([self header]) {
     [[self header] removeFromSuperview];
   }
+
   CGRect frame = self.view.frame;
   frame.origin.y = 0;
   frame.size.height = [self headerHeight];
 
-  self.header = [[GUITabScrollView alloc] initWithFrame:frame tabViews:tabViews color:[self headerColor] selectedTabIndex:self.selectedIndex];
+  self.header = [[GUITabScrollView alloc] initWithFrame:frame
+                                               tabViews:tabViews
+                                                  color:[self headerColor]
+                                       selectedTabIndex:self.selectedIndex];
+
   self.header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
   self.header.backgroundColor = [self tabBackgroundColor];
   self.header.tabScrollDelegate = self;
@@ -231,6 +215,75 @@
                                    completion:nil];
   [[self header] selectTabAtIndex:index animated:animation];
   [self setSelectedIndex:index];
+}
+
+#pragma mark - Private Methods
+
+- (void)setupUI {
+  if ([[self dataSource] respondsToSelector:@selector(tabHeight)]) {
+    [self setHeaderHeight:[[self dataSource] tabHeight]];
+  } else {
+    [self setHeaderHeight:44.0f];
+  }
+
+  if ([[self dataSource] respondsToSelector:@selector(tabColor)]) {
+    [self setHeaderColor:[[self dataSource] tabColor]];
+  } else {
+    [self setHeaderColor:[UIColor orangeColor]];
+  }
+
+  if ([[self dataSource] respondsToSelector:@selector(tabBackgroundColor)]) {
+    [self setTabBackgroundColor:[[self dataSource] tabBackgroundColor]];
+  } else {
+    [self setTabBackgroundColor:[UIColor colorWithWhite:0.95f alpha:1.0f]];
+  }
+}
+
+- (NSMutableArray *)addTabsFromViews {
+  NSMutableArray *tabViews = [NSMutableArray array];
+
+  for (int i = 0; i < [[self viewControllers] count]; i++) {
+    UIView *view;
+    if ((view = [[self dataSource] viewForTabAtIndex:i]) != nil) {
+      [tabViews addObject:view];
+    }
+  }
+
+  return tabViews;
+}
+
+- (NSMutableArray *)addTabsFromTitles {
+  NSMutableArray *tabViews = [NSMutableArray array];
+
+  UIFont *font;
+  if ([[self dataSource] respondsToSelector:@selector(titleFont)]) {
+    font = [[self dataSource] titleFont];
+  } else {
+    font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
+  }
+
+  UIColor *color;
+  if ([[self dataSource] respondsToSelector:@selector(titleColor)]) {
+    color = [[self dataSource] titleColor];
+  } else {
+    color = [UIColor blackColor];
+  }
+
+  for (NSString *title in [self tabTitles]) {
+    UILabel *label = [UILabel new];
+    [label setText:title];
+    [label setTextAlignment:NSTextAlignmentCenter];
+    [label setFont:font];
+    [label setTextColor:color];
+    [label sizeToFit];
+
+    CGRect frame = [label frame];
+    frame.size.width = MAX(frame.size.width + 20, 85);
+    [label setFrame:frame];
+    [tabViews addObject:label];
+  }
+
+  return tabViews;
 }
 
 @end

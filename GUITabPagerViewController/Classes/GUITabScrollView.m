@@ -26,7 +26,9 @@
 
 #pragma mark - Initialize Methods
 
-- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color selectedTabIndex:(NSInteger)index {
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
+             selectedTabIndex:(NSInteger)index {
+
   self = [self initWithFrame:frame tabViews:tabViews color:color];
 
   if (!self) {
@@ -61,46 +63,10 @@
   bottomLine.backgroundColor = color;
   [self addSubview:bottomLine];
 
-  CGFloat bottomLineHeight = 2.0f;
-  NSDictionary *views = NSDictionaryOfVariableBindings(contentView, bottomLine);
-  [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[bottomLine]-0-|" options:0 metrics:nil views:views]];
-  [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-[bottomLine(bottomLineHeight)]-0-|" options:0 metrics:@{@"bottomLineHeight":@(bottomLineHeight)} views:views]];
-  [self addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0 constant:-bottomLineHeight]];
+  [self addConstraintsToContentView:contentView bottomLine:bottomLine];
 
-  self.tabsLeadingConstraint = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
-  self.tabsTrailingConstraint = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0];
-  [self addConstraints:@[self.tabsLeadingConstraint, self.tabsTrailingConstraint]];
-
-  // Tabs
-  NSMutableString *VFL = [NSMutableString stringWithString:@"H:|"];
-  NSMutableDictionary *tabViewsDict = [NSMutableDictionary dictionary];
-  for (int index = 0; index < tabViews.count; index++) {
-    UIView *tab = tabViews[index];
-    [tab setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [contentView addSubview:tab];
-
-    [VFL appendFormat:@"-10-[T%d]", index];
-    [tabViewsDict setObject:tab forKey:[NSString stringWithFormat:@"T%d", index]];
-
-    [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[T]-0-|" options:0 metrics:nil views:@{@"T": tab}]];
-    [tab setUserInteractionEnabled:YES];
-    [tab addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tabTapHandler:)]];
-  }
-
-  [VFL appendString:@"-10-|"];
-  [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:VFL options:0 metrics:nil views:tabViewsDict]];
-
-  // Indicator
-  UIView *tabIndicator = [UIView new];
-  [tabIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
-  tabIndicator.backgroundColor = color;
-  [contentView addSubview:tabIndicator];
-  self.tabIndicator = tabIndicator;
-
-  [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[tabIndicator(3)]-0-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(tabIndicator)]];
-  self.indicatorWidthConstraint = [NSLayoutConstraint constraintWithItem:tabIndicator attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.tabViews[0] attribute:NSLayoutAttributeWidth multiplier:1.0f constant:10.0f];
-  self.indicatorCenterConstraint = [NSLayoutConstraint constraintWithItem:tabIndicator attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.tabViews[0] attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f];
-  [contentView addConstraints:@[self.indicatorCenterConstraint, self.indicatorWidthConstraint]];
+  [self addTabsFrom:tabViews toContentView:contentView];
+  [self addIndicatorsToContentView:contentView withColor:color];
 
   return self;
 }
@@ -136,8 +102,11 @@
     animatedDuration = 0.0f;
   }
 
-  self.indicatorWidthConstraint = [self replaceConstraint:self.indicatorWidthConstraint withNewToItem:self.tabViews[index]];
-  self.indicatorCenterConstraint = [self replaceConstraint:self.indicatorCenterConstraint withNewToItem:self.tabViews[index]];
+  self.indicatorWidthConstraint = [self replaceConstraint:self.indicatorWidthConstraint
+                                            withNewToItem:self.tabViews[index]];
+
+  self.indicatorCenterConstraint = [self replaceConstraint:self.indicatorCenterConstraint
+                                             withNewToItem:self.tabViews[index]];
 
   [UIView animateWithDuration:animatedDuration animations:^{
     [self layoutIfNeeded];
@@ -146,7 +115,9 @@
 }
 
 - (void)tabTapHandler:(UITapGestureRecognizer *)gestureRecognizer {
-  if ([[self tabScrollDelegate] respondsToSelector:@selector(tabScrollView:didSelectTabAtIndex:)]) {
+  SEL selector = @selector(tabScrollView:didSelectTabAtIndex:);
+
+  if ([[self tabScrollDelegate] respondsToSelector:selector]) {
     NSInteger index = [self.tabViews indexOfObject:[gestureRecognizer view]];
     [[self tabScrollDelegate] tabScrollView:self didSelectTabAtIndex:index];
     [self selectTabAtIndex:index];
@@ -155,8 +126,119 @@
 
 #pragma mark - Private Methods
 
+- (void)addConstraintsToContentView:(UIView *)contentView  bottomLine:(UIView *)bottomLine {
+  CGFloat bottomLineHeight = 2.0f;
+  NSDictionary *views = NSDictionaryOfVariableBindings(contentView, bottomLine);
+
+  [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[bottomLine]-0-|"
+                                                               options:0
+                                                               metrics:nil
+                                                                 views:views]];
+
+  NSString *format = @"V:|-0-[contentView]-0-[bottomLine(bottomLineHeight)]-0-|";
+  NSDictionary *metrics = @{@"bottomLineHeight":@(bottomLineHeight)};
+  [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format
+                                                               options:0
+                                                               metrics:metrics
+                                                                 views:views]];
+
+  [self addConstraint:[NSLayoutConstraint constraintWithItem:contentView
+                                                   attribute:NSLayoutAttributeHeight
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:self
+                                                   attribute:NSLayoutAttributeHeight
+                                                  multiplier:1.0f
+                                                    constant:-bottomLineHeight]];
+
+  self.tabsLeadingConstraint =
+  [NSLayoutConstraint constraintWithItem:contentView
+                               attribute:NSLayoutAttributeLeading
+                               relatedBy:NSLayoutRelationEqual
+                                  toItem:self
+                               attribute:NSLayoutAttributeLeading
+                              multiplier:1.0f
+                                constant:0];
+
+  self.tabsTrailingConstraint =
+  [NSLayoutConstraint constraintWithItem:contentView
+                               attribute:NSLayoutAttributeTrailing
+                               relatedBy:NSLayoutRelationEqual
+                                  toItem:self
+                               attribute:NSLayoutAttributeTrailing
+                              multiplier:1.0f
+                                constant:0];
+
+  [self addConstraints:@[self.tabsLeadingConstraint, self.tabsTrailingConstraint]];
+}
+
+- (void)addTabsFrom:(NSArray *)tabViews toContentView:(UIView *)contentView {
+  NSMutableString *VFL = [NSMutableString stringWithString:@"H:|"];
+  NSMutableDictionary *tabViewsDict = [NSMutableDictionary dictionary];
+  for (int index = 0; index < tabViews.count; index++) {
+    UIView *tab = tabViews[index];
+    [tab setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [contentView addSubview:tab];
+
+    [VFL appendFormat:@"-10-[T%d]", index];
+    tabViewsDict[[NSString stringWithFormat:@"T%d", index]] = tab;
+
+    [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[T]-0-|"
+                                                                        options:0
+                                                                        metrics:nil
+                                                                          views:@{@"T": tab}]];
+    [tab setUserInteractionEnabled:YES];
+    [tab addGestureRecognizer:[
+                               [UITapGestureRecognizer alloc] initWithTarget:self
+                               action:@selector(tabTapHandler:)]
+     ];
+  }
+
+  [VFL appendString:@"-10-|"];
+  [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:VFL
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:tabViewsDict]];
+}
+
+- (void)addIndicatorsToContentView:(UIView *)contentView withColor:(UIColor *)color {
+  UIView *tabIndicator = [UIView new];
+  [tabIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
+  tabIndicator.backgroundColor = color;
+  [contentView addSubview:tabIndicator];
+  self.tabIndicator = tabIndicator;
+
+  NSString *format = @"V:[tabIndicator(3)]-0-|";
+  NSDictionary *views = NSDictionaryOfVariableBindings(tabIndicator);
+
+  [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format
+                                                                      options:0
+                                                                      metrics:nil
+                                                                        views:views]];
+
+  self.indicatorWidthConstraint =
+    [NSLayoutConstraint constraintWithItem:tabIndicator
+                                 attribute:NSLayoutAttributeWidth
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:self.tabViews[0]
+                                 attribute:NSLayoutAttributeWidth
+                                multiplier:1.0f
+                                  constant:10.0f];
+
+  self.indicatorCenterConstraint =
+    [NSLayoutConstraint constraintWithItem:tabIndicator
+                                 attribute:NSLayoutAttributeCenterX
+                                 relatedBy:NSLayoutRelationEqual
+                                    toItem:self.tabViews[0]
+                                 attribute:NSLayoutAttributeCenterX
+                                multiplier:1.0f
+                                  constant:0.0f];
+
+  [contentView addConstraints:@[self.indicatorCenterConstraint, self.indicatorWidthConstraint]];
+}
+
 - (void)scrollToSelectedTab {
-  CGRect indicatorRect = [self.tabIndicator convertRect:self.tabIndicator.bounds toView:self.superview];
+  CGRect indicatorRect = [self.tabIndicator convertRect:self.tabIndicator.bounds
+                                                 toView:self.superview];
   CGFloat diff = 0.0f;
 
   if (indicatorRect.origin.x < 0) {
@@ -173,8 +255,18 @@
   }
 }
 
-- (NSLayoutConstraint *)replaceConstraint:(NSLayoutConstraint *)oldConstraint withNewToItem:(UIView *)toItem {
-  NSLayoutConstraint *newConstraint = [NSLayoutConstraint constraintWithItem:oldConstraint.firstItem attribute:oldConstraint.firstAttribute relatedBy:oldConstraint.relation toItem:toItem attribute:oldConstraint.secondAttribute multiplier:oldConstraint.multiplier constant:oldConstraint.constant];
+- (NSLayoutConstraint *)replaceConstraint:(NSLayoutConstraint *)oldConstraint
+                            withNewToItem:(UIView *)toItem {
+
+  NSLayoutConstraint *newConstraint =
+    [NSLayoutConstraint constraintWithItem:oldConstraint.firstItem
+                                 attribute:oldConstraint.firstAttribute
+                                 relatedBy:oldConstraint.relation
+                                    toItem:toItem
+                                 attribute:oldConstraint.secondAttribute
+                                multiplier:oldConstraint.multiplier
+                                  constant:oldConstraint.constant];
+
   [newConstraint setPriority:oldConstraint.priority];
   newConstraint.shouldBeArchived = oldConstraint.shouldBeArchived;
   newConstraint.identifier = oldConstraint.identifier;
