@@ -1,6 +1,10 @@
 # GUITabPagerViewController
 
-[![CocoaPods](https://img.shields.io/cocoapods/v/GUITabPagerViewController.svg)](http://cocoadocs.org/docsets/GUITabPagerViewController) [![CocoaPods](https://img.shields.io/cocoapods/l/GUITabPagerViewController.svg)]() [![CocoaPods](https://img.shields.io/cocoapods/p/GUITabPagerViewController.svg)]()
+[![CocoaPods](https://img.shields.io/cocoapods/v/GUITabPagerViewController.svg)](http://cocoadocs.org/docsets/GUITabPagerViewController)
+[![CocoaPods](https://img.shields.io/cocoapods/dt/GUITabPagerViewController.svg)]()
+[![CocoaPods](https://img.shields.io/cocoapods/at/GUITabPagerViewController.svg)]()
+[![CocoaPods](https://img.shields.io/cocoapods/l/GUITabPagerViewController.svg)]()
+[![CocoaPods](https://img.shields.io/cocoapods/p/GUITabPagerViewController.svg)]()
 
 <img src="preview.gif" alt="Animated gif">
 
