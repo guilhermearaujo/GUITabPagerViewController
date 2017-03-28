@@ -38,6 +38,7 @@
 - (UIColor *)tabBackgroundColor;
 - (UIFont *)titleFont;
 - (UIColor *)titleColor;
+- (CGFloat)bottomLineHeight;
 
 @end
 
@@ -46,5 +47,5 @@
 @optional
 - (void)tabPager:(GUITabPagerViewController *)tabPager willTransitionToTabAtIndex:(NSInteger)index;
 - (void)tabPager:(GUITabPagerViewController *)tabPager didTransitionToTabAtIndex:(NSInteger)index;
-
+  
 @end

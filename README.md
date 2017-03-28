@@ -9,12 +9,12 @@
 <img src="preview.gif" alt="Animated gif">
 
 ## Installation
-**CocoaPods** (recommended)  
-Add the following line to your `Podfile`:  
-`pod 'GUITabPagerViewController', '~> 0.1.0'`  
+**CocoaPods** (recommended)
+Add the following line to your `Podfile`:
+`pod 'GUITabPagerViewController', '~> 0.1.0'`
 And then add `#import <GUITabPagerViewController.h>` to your view controller.
 
-**Manual**  
+**Manual**
 Copy the folders `Classes` to your project, then add `#import "GUITabPagerViewController.h"` to your view controller.
 
 ## Usage
@@ -54,6 +54,7 @@ The data source methods will allow you to provide content to your tab pager view
 - (UIColor *)tabBackgroundColor; // Default: [UIColor colorWithWhite:0.95f alpha:1.0f];
 - (UIFont *)titleFont; // Default: [UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0f];
 - (UIColor *)titleColor; // Default: [UIColor blackColor];
+- (CFGloat)bottomLineHeight; // Default: 2.0f;
 ```
 
 ### Delegate

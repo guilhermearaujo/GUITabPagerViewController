@@ -191,9 +191,17 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
   frame.origin.y = 0;
   frame.size.height = [self headerHeight];
 
+  CGFloat bottomLineHeight;
+  if ([[self dataSource] respondsToSelector:@selector(bottomLineHeight)]) {
+    bottomLineHeight = [[self dataSource] bottomLineHeight];
+  } else {
+    bottomLineHeight = 2.0f;
+  }
+
   self.header = [[GUITabScrollView alloc] initWithFrame:frame
                                                tabViews:tabViews
                                                   color:[self headerColor]
+                                       bottomLineHeight: bottomLineHeight
                                        selectedTabIndex:self.selectedIndex];
 
   self.header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -282,8 +290,8 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
     [label setFrame:frame];
     [tabViews addObject:label];
   }
-
+  
   return tabViews;
 }
-
+  
 @end

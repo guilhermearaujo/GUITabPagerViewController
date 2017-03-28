@@ -27,9 +27,9 @@
 #pragma mark - Initialize Methods
 
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
-             selectedTabIndex:(NSInteger)index {
+             bottomLineHeight:(CGFloat)bottomLineHeight selectedTabIndex:(NSInteger)index {
 
-  self = [self initWithFrame:frame tabViews:tabViews color:color];
+  self = [self initWithFrame:frame tabViews:tabViews color:color bottomLineHeight:bottomLineHeight];
 
   if (!self) {
     return nil;
@@ -41,7 +41,8 @@
 
 }
 
-- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color {
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
+             bottomLineHeight:(CGFloat)bottomLineHeight {
   self = [super initWithFrame:frame];
 
   if (!self) {
@@ -63,7 +64,7 @@
   bottomLine.backgroundColor = color;
   [self addSubview:bottomLine];
 
-  [self addConstraintsToContentView:contentView bottomLine:bottomLine];
+  [self addConstraintsToContentView:contentView bottomLine:bottomLine bottomLineHeight:bottomLineHeight];
 
   [self addTabsFrom:tabViews toContentView:contentView];
   [self addIndicatorsToContentView:contentView withColor:color];
@@ -126,8 +127,7 @@
 
 #pragma mark - Private Methods
 
-- (void)addConstraintsToContentView:(UIView *)contentView  bottomLine:(UIView *)bottomLine {
-  CGFloat bottomLineHeight = 2.0f;
+- (void)addConstraintsToContentView:(UIView *)contentView bottomLine:(UIView *)bottomLine bottomLineHeight:(CGFloat)bottomLineHeight {
   NSDictionary *views = NSDictionaryOfVariableBindings(contentView, bottomLine);
 
   [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[bottomLine]-0-|"
@@ -273,8 +273,8 @@
 
   [NSLayoutConstraint deactivateConstraints:@[oldConstraint]];
   [NSLayoutConstraint activateConstraints:@[newConstraint]];
-
+  
   return newConstraint;
 }
-
+  
 @end
