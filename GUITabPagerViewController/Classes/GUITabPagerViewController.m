@@ -139,6 +139,8 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
   [self setViewControllers:[NSMutableArray array]];
   [self setTabTitles:[NSMutableArray array]];
 
+  [self.view removeConstraints:[self.view constraints]];
+
   for (int i = 0; i < [[self dataSource] numberOfViewControllers]; i++) {
     UIViewController *viewController;
 
@@ -156,7 +158,7 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
 
   [self reloadTabs];
 
-  CGRect frame = [[self view] frame];
+  CGRect frame = [[self view] bounds];
   frame.origin.y = [self headerHeight];
   frame.size.height -= [self headerHeight];
 
@@ -167,6 +169,21 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
                                      animated:NO
                                    completion:nil];
   [self setSelectedIndex:0];
+
+  [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[header]-0-[pager]-0-|"
+                                                                    options:0
+                                                                    metrics:nil
+                                                                      views:@{
+                                                                              @"header": self.header,
+                                                                              @"pager": self.pageViewController.view
+                                                                              }]];
+
+  [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[pager]-0-|"
+                                                                    options:0
+                                                                    metrics:nil
+                                                                      views:@{@"pager": self.pageViewController.view}]];
+
+  [self.pageViewController.view setTranslatesAutoresizingMaskIntoConstraints:NO];
 }
 
 - (void)reloadTabs {
@@ -187,8 +204,7 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
     [[self header] removeFromSuperview];
   }
 
-  CGRect frame = self.view.frame;
-  frame.origin.y = 0;
+  CGRect frame = self.view.bounds;
   frame.size.height = [self headerHeight];
 
   CGFloat bottomLineHeight;
@@ -204,10 +220,20 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
                                        bottomLineHeight: bottomLineHeight
                                        selectedTabIndex:self.selectedIndex];
 
-  self.header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+  [self.header setTranslatesAutoresizingMaskIntoConstraints:NO];
   self.header.backgroundColor = [self tabBackgroundColor];
   self.header.tabScrollDelegate = self;
   [self.view addSubview:self.header];
+
+  [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[header(headerHeight)]"
+                                                                    options:0
+                                                                    metrics:@{@"headerHeight": @(self.headerHeight)}
+                                                                      views:@{@"header": self.header}]];
+
+  [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[header]-0-|"
+                                                                    options:0
+                                                                    metrics:nil
+                                                                      views:@{@"header": self.header}]];
 }
 
 #pragma mark - Public Methods
