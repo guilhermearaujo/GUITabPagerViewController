@@ -220,7 +220,8 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
                                        bottomLineHeight: bottomLineHeight
                                        selectedTabIndex:self.selectedIndex];
 
-  [self.header setTranslatesAutoresizingMaskIntoConstraints:NO];
+//  [self.header setTranslatesAutoresizingMaskIntoConstraints:NO];
+  self.header.autoresizingMask = UIViewAutoresizingFlexibleWidth;
   self.header.backgroundColor = [self tabBackgroundColor];
   self.header.tabScrollDelegate = self;
   [self.view addSubview:self.header];
