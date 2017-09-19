@@ -65,7 +65,7 @@
 
 - (UIColor *)tabBackgroundColor {
   // Default: [UIColor colorWithWhite:0.95f alpha:1.0f];
-  return [UIColor lightTextColor];
+  return [UIColor lightGrayColor];
 }
 
 - (UIFont *)titleFont {

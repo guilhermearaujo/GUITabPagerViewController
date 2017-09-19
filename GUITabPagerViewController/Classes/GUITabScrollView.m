@@ -79,6 +79,17 @@
   [self scrollToSelectedTab];
 }
 
+- (void)layoutSubviews {
+  [super layoutSubviews];
+
+  UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, self.contentSize.width, self.contentSize.height)];
+  self.layer.shadowPath = shadowPath.CGPath;
+  self.layer.shadowColor = [[UIColor blackColor] CGColor];
+  self.layer.shadowRadius = 5;
+  self.layer.shadowOpacity = 0.6;
+  self.layer.masksToBounds = NO;
+}
+
 - (void)updateConstraints {
   CGFloat offset = 0.0f;
   if (self.bounds.size.width > self.tabsView.frame.size.width) {
@@ -179,7 +190,7 @@
     [tab setTranslatesAutoresizingMaskIntoConstraints:NO];
     [contentView addSubview:tab];
 
-    [VFL appendFormat:@"-10-[T%d]", index];
+    [VFL appendFormat:@"-0-[T%d(%d)]", index, (int)(tab.frame.size.width)];
     tabViewsDict[[NSString stringWithFormat:@"T%d", index]] = tab;
 
     [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[T]-0-|"
@@ -193,7 +204,7 @@
      ];
   }
 
-  [VFL appendString:@"-10-|"];
+  [VFL appendString:@"-0-|"];
   [contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:VFL
                                                                       options:0
                                                                       metrics:nil
@@ -222,7 +233,7 @@
                                     toItem:self.tabViews[0]
                                  attribute:NSLayoutAttributeWidth
                                 multiplier:1.0f
-                                  constant:10.0f];
+                                  constant:0.0f];
 
   self.indicatorCenterConstraint =
     [NSLayoutConstraint constraintWithItem:tabIndicator
@@ -242,9 +253,9 @@
   CGFloat diff = 0.0f;
 
   if (indicatorRect.origin.x < 0) {
-    diff = indicatorRect.origin.x - 5.0f;
+    diff = indicatorRect.origin.x;
   } else if (CGRectGetMaxX(indicatorRect) > self.frame.size.width) {
-    diff = CGRectGetMaxX(indicatorRect) - self.frame.size.width + 5.0f;
+    diff = CGRectGetMaxX(indicatorRect) - self.frame.size.width;
   } else {
     diff = 0.0f;
   }

@@ -306,6 +306,7 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
 
   for (NSString *title in [self tabTitles]) {
     UILabel *label = [UILabel new];
+    [label setBackgroundColor:[self tabBackgroundColor]];
     [label setText:title];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setFont:font];
