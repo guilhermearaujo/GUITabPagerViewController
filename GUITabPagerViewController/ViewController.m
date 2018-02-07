@@ -30,7 +30,7 @@
 #pragma mark - Tab Pager Data Source
 
 - (NSInteger)numberOfViewControllers {
-  return 10;
+  return 3;
 }
 
 - (UIViewController *)viewControllerForIndex:(NSInteger)index {
@@ -51,6 +51,12 @@
 
 - (NSString *)titleForTabAtIndex:(NSInteger)index {
   return [NSString stringWithFormat:@"Tab #%ld", (long) index + 1];
+}
+
+- (TabPosition)tabPosition {
+  // Options: TabPositionLeft, TabPositionCenter, TabPositionRight
+  // Default: TabPositionCenter
+  return TabPositionRight;
 }
 
 - (CGFloat)tabHeight {

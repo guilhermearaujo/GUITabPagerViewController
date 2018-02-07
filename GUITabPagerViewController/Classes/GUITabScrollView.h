@@ -12,10 +12,17 @@
 
 @interface GUITabScrollView : UIScrollView
 
+typedef NS_ENUM(NSInteger, TabPosition) {
+  TabPositionLeft,
+  TabPositionCenter,
+  TabPositionRight
+};
+
 @property (weak, nonatomic) id<GUITabScrollDelegate> tabScrollDelegate;
 
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color bottomLineHeight:(CGFloat)bottomLineHeight;
 - (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color bottomLineHeight:(CGFloat)bottomLineHeight selectedTabIndex:(NSInteger)index;
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabPosition:(TabPosition)tabPosition color:(UIColor *)color bottomLineHeight:(CGFloat)bottomLineHeight selectedTabIndex:(NSInteger)index;
 
 - (void)selectTabAtIndex:(NSInteger)index;
 - (void)selectTabAtIndex:(NSInteger)index animated:(BOOL)animated;

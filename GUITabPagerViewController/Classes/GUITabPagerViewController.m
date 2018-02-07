@@ -20,6 +20,7 @@
 @property (strong, nonatomic) UIColor *headerColor;
 @property (strong, nonatomic) UIColor *tabBackgroundColor;
 @property (assign, nonatomic) CGFloat headerHeight;
+@property (assign, nonatomic) TabPosition tabPosition;
 
 @end
 
@@ -216,6 +217,7 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
 
   self.header = [[GUITabScrollView alloc] initWithFrame:frame
                                                tabViews:tabViews
+                                            tabPosition:[self tabPosition]
                                                   color:[self headerColor]
                                        bottomLineHeight: bottomLineHeight
                                        selectedTabIndex:self.selectedIndex];
@@ -255,6 +257,12 @@ willTransitionToViewControllers:(NSArray *)pendingViewControllers {
 #pragma mark - Private Methods
 
 - (void)setupUI {
+  if ([[self dataSource] respondsToSelector:@selector(tabPosition)]) {
+    [self setTabPosition:[[self dataSource] tabPosition]];
+  } else {
+    [self setTabPosition:TabPositionCenter];
+  }
+
   if ([[self dataSource] respondsToSelector:@selector(tabHeight)]) {
     [self setHeaderHeight:[[self dataSource] tabHeight]];
   } else {

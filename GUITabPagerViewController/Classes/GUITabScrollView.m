@@ -13,6 +13,7 @@
 @property (strong, nonatomic) NSArray *tabViews;
 
 @property (strong, nonatomic) UIView *tabsView;
+@property (assign, nonatomic) TabPosition tabPosition;
 @property (strong, nonatomic) UIView *tabIndicator;
 
 @property (strong, nonatomic) NSLayoutConstraint *tabsLeadingConstraint;
@@ -26,28 +27,16 @@
 
 #pragma mark - Initialize Methods
 
-- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
-             bottomLineHeight:(CGFloat)bottomLineHeight selectedTabIndex:(NSInteger)index {
-
-  self = [self initWithFrame:frame tabViews:tabViews color:color bottomLineHeight:bottomLineHeight];
-
-  if (!self) {
-    return nil;
-  }
-
-  [self selectTabAtIndex:(index ?: 0) animated:NO];
-
-  return self;
-
-}
-
-- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
-             bottomLineHeight:(CGFloat)bottomLineHeight {
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews tabPosition:(TabPosition)tabPosition
+                        color:(UIColor *)color bottomLineHeight:(CGFloat)bottomLineHeight
+             selectedTabIndex:(NSInteger)index {
   self = [super initWithFrame:frame];
 
   if (!self) {
     return nil;
   }
+
+  [self setTabPosition:tabPosition];
 
   [self setShowsHorizontalScrollIndicator:NO];
   [self setBounces:NO];
@@ -69,7 +58,21 @@
   [self addTabsFrom:tabViews toContentView:contentView];
   [self addIndicatorsToContentView:contentView withColor:color];
 
+  [self selectTabAtIndex:(index ?: 0) animated:NO];
+
   return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
+             bottomLineHeight:(CGFloat)bottomLineHeight selectedTabIndex:(NSInteger)index {
+  return [self initWithFrame:frame tabViews:tabViews tabPosition:TabPositionCenter color:color
+            bottomLineHeight:bottomLineHeight selectedTabIndex:index];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame tabViews:(NSArray *)tabViews color:(UIColor *)color
+             bottomLineHeight:(CGFloat)bottomLineHeight {
+  return [self initWithFrame:frame tabViews:tabViews tabPosition:TabPositionCenter color:color
+            bottomLineHeight:bottomLineHeight selectedTabIndex:0];
 }
 
 - (void)setFrame:(CGRect)frame {
@@ -91,12 +94,29 @@
 }
 
 - (void)updateConstraints {
-  CGFloat offset = 0.0f;
-  if (self.bounds.size.width > self.tabsView.frame.size.width) {
-    offset = (self.bounds.size.width - self.tabsView.frame.size.width) / 2.0f;
+  CGFloat offset = self.bounds.size.width - self.tabsView.frame.size.width;
+
+  switch (self.tabPosition) {
+    case TabPositionLeft:
+      self.tabsLeadingConstraint.constant = 0;
+      self.tabsTrailingConstraint.constant = offset;
+      break;
+
+    case TabPositionRight:
+      self.tabsLeadingConstraint.constant = offset;
+      self.tabsTrailingConstraint.constant = 0;
+      break;
+
+    case TabPositionCenter: {
+      if (self.bounds.size.width > self.tabsView.frame.size.width) {
+        offset /= 2.0f;
+      }
+
+      self.tabsLeadingConstraint.constant = offset;
+      self.tabsTrailingConstraint.constant = offset;
+      break;
+    }
   }
-  self.tabsLeadingConstraint.constant = offset;
-  self.tabsTrailingConstraint.constant = -offset;
 
   [super updateConstraints];
 }
@@ -171,10 +191,10 @@
                                 constant:0];
 
   self.tabsTrailingConstraint =
-  [NSLayoutConstraint constraintWithItem:contentView
+  [NSLayoutConstraint constraintWithItem:self
                                attribute:NSLayoutAttributeTrailing
                                relatedBy:NSLayoutRelationEqual
-                                  toItem:self
+                                  toItem:contentView
                                attribute:NSLayoutAttributeTrailing
                               multiplier:1.0f
                                 constant:0];
@@ -185,11 +205,14 @@
 - (void)addTabsFrom:(NSArray *)tabViews toContentView:(UIView *)contentView {
   NSMutableString *VFL = [NSMutableString stringWithString:@"H:|"];
   NSMutableDictionary *tabViewsDict = [NSMutableDictionary dictionary];
+  int totalTabsWidth = 0;
+
   for (int index = 0; index < tabViews.count; index++) {
     UIView *tab = tabViews[index];
     [tab setTranslatesAutoresizingMaskIntoConstraints:NO];
     [contentView addSubview:tab];
 
+    totalTabsWidth += (int)(tab.frame.size.width);
     [VFL appendFormat:@"-0-[T%d(%d)]", index, (int)(tab.frame.size.width)];
     tabViewsDict[[NSString stringWithFormat:@"T%d", index]] = tab;
 
@@ -198,10 +221,7 @@
                                                                         metrics:nil
                                                                           views:@{@"T": tab}]];
     [tab setUserInteractionEnabled:YES];
-    [tab addGestureRecognizer:[
-                               [UITapGestureRecognizer alloc] initWithTarget:self
-                               action:@selector(tabTapHandler:)]
-     ];
+    [tab addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tabTapHandler:)]];
   }
 
   [VFL appendString:@"-0-|"];

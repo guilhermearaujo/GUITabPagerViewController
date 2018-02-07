@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GUITabScrollView.h"
 
 @protocol GUITabPagerDataSource;
 @protocol GUITabPagerDelegate;
@@ -31,6 +32,7 @@
 - (UIViewController *)viewControllerForIndex:(NSInteger)index;
 
 @optional
+- (TabPosition)tabPosition;
 - (UIView *)viewForTabAtIndex:(NSInteger)index;
 - (NSString *)titleForTabAtIndex:(NSInteger)index;
 - (CGFloat)tabHeight;
